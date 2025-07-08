@@ -1145,6 +1145,7 @@ export namespace Prisma {
     srn: string | null
     email: string | null
     password: string | null
+    codeforcesHandle: string | null
     resetToken: string | null
     resetTokenExpiry: Date | null
     createdAt: Date | null
@@ -1156,6 +1157,7 @@ export namespace Prisma {
     srn: string | null
     email: string | null
     password: string | null
+    codeforcesHandle: string | null
     resetToken: string | null
     resetTokenExpiry: Date | null
     createdAt: Date | null
@@ -1167,6 +1169,7 @@ export namespace Prisma {
     srn: number
     email: number
     password: number
+    codeforcesHandle: number
     resetToken: number
     resetTokenExpiry: number
     createdAt: number
@@ -1180,6 +1183,7 @@ export namespace Prisma {
     srn?: true
     email?: true
     password?: true
+    codeforcesHandle?: true
     resetToken?: true
     resetTokenExpiry?: true
     createdAt?: true
@@ -1191,6 +1195,7 @@ export namespace Prisma {
     srn?: true
     email?: true
     password?: true
+    codeforcesHandle?: true
     resetToken?: true
     resetTokenExpiry?: true
     createdAt?: true
@@ -1202,6 +1207,7 @@ export namespace Prisma {
     srn?: true
     email?: true
     password?: true
+    codeforcesHandle?: true
     resetToken?: true
     resetTokenExpiry?: true
     createdAt?: true
@@ -1286,6 +1292,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle: string | null
     resetToken: string | null
     resetTokenExpiry: Date | null
     createdAt: Date
@@ -1314,6 +1321,7 @@ export namespace Prisma {
     srn?: boolean
     email?: boolean
     password?: boolean
+    codeforcesHandle?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
     createdAt?: boolean
@@ -1327,6 +1335,7 @@ export namespace Prisma {
     srn?: boolean
     email?: boolean
     password?: boolean
+    codeforcesHandle?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
     createdAt?: boolean
@@ -1338,6 +1347,7 @@ export namespace Prisma {
     srn?: boolean
     email?: boolean
     password?: boolean
+    codeforcesHandle?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
     createdAt?: boolean
@@ -1349,13 +1359,14 @@ export namespace Prisma {
     srn?: boolean
     email?: boolean
     password?: boolean
+    codeforcesHandle?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "srn" | "email" | "password" | "resetToken" | "resetTokenExpiry" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "srn" | "email" | "password" | "codeforcesHandle" | "resetToken" | "resetTokenExpiry" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1373,6 +1384,7 @@ export namespace Prisma {
       srn: string
       email: string
       password: string
+      codeforcesHandle: string | null
       resetToken: string | null
       resetTokenExpiry: Date | null
       createdAt: Date
@@ -1805,6 +1817,7 @@ export namespace Prisma {
     readonly srn: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
+    readonly codeforcesHandle: FieldRef<"User", 'String'>
     readonly resetToken: FieldRef<"User", 'String'>
     readonly resetTokenExpiry: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -4488,6 +4501,7 @@ export namespace Prisma {
     srn: 'srn',
     email: 'email',
     password: 'password',
+    codeforcesHandle: 'codeforcesHandle',
     resetToken: 'resetToken',
     resetTokenExpiry: 'resetTokenExpiry',
     createdAt: 'createdAt',
@@ -4631,6 +4645,7 @@ export namespace Prisma {
     srn?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    codeforcesHandle?: StringNullableFilter<"User"> | string | null
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -4643,6 +4658,7 @@ export namespace Prisma {
     srn?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    codeforcesHandle?: SortOrderInput | SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -4654,6 +4670,7 @@ export namespace Prisma {
     id?: string
     srn?: string
     email?: string
+    codeforcesHandle?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -4663,13 +4680,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     submissions?: SubmissionListRelationFilter
-  }, "id" | "srn" | "email">
+  }, "id" | "srn" | "email" | "codeforcesHandle">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     srn?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    codeforcesHandle?: SortOrderInput | SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -4687,6 +4705,7 @@ export namespace Prisma {
     srn?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
+    codeforcesHandle?: StringNullableWithAggregatesFilter<"User"> | string | null
     resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -4826,6 +4845,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle?: string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
@@ -4838,6 +4858,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle?: string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
@@ -4850,6 +4871,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4862,6 +4884,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4874,6 +4897,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle?: string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
@@ -4885,6 +4909,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4896,6 +4921,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5102,6 +5128,7 @@ export namespace Prisma {
     srn?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    codeforcesHandle?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
@@ -5113,6 +5140,7 @@ export namespace Prisma {
     srn?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    codeforcesHandle?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
@@ -5124,6 +5152,7 @@ export namespace Prisma {
     srn?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    codeforcesHandle?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
@@ -5742,6 +5771,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle?: string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
@@ -5753,6 +5783,7 @@ export namespace Prisma {
     srn: string
     email: string
     password: string
+    codeforcesHandle?: string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
@@ -5803,6 +5834,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5814,6 +5846,7 @@ export namespace Prisma {
     srn?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    codeforcesHandle?: NullableStringFieldUpdateOperationsInput | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
