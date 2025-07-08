@@ -1,0 +1,52 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql" // Change to "mysql" or "sqlite" if needed
+  url      = env("DB_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  srn       String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions Submission[]
+}
+
+model Question {
+  id           String   @id @default(uuid())
+  title        String
+  codeforcesId Int // e.g., 1234
+  link         String // full Codeforces problem link
+  date         DateTime @unique // This ensures one question per day
+
+  createdAt   DateTime     @default(now())
+  submissions Submission[]
+}
+
+model Submission {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+
+  status      SubmissionStatus
+  score       Int              @default(0)
+  submittedAt DateTime         @default(now())
+
+  @@unique([userId, questionId]) // ensures one submission per user per question
+}
+
+enum SubmissionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
