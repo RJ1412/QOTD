@@ -1,6 +1,7 @@
 {
   "name": "code-tracker",
   "version": "1.0.0",
+  "type": "module",
   "description": "will be used in codeclub",
   "main": "index.js",
   "scripts": {
@@ -16,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
