@@ -125,6 +125,8 @@ exports.Prisma.UserScalarFieldEnum = {
   srn: 'srn',
   email: 'email',
   password: 'password',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -155,6 +157,11 @@ exports.Prisma.SortOrder = {
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.SubmissionStatus = exports.$Enums.SubmissionStatus = {
   PENDING: 'PENDING',
