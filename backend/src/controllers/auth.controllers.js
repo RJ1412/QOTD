@@ -93,38 +93,45 @@ export const verifyOtp = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    const { srn, email, password } = req.body;
-    if ((!srn && !email) || !password) return res.status(400).json({ error: "SRN or Email and Password are required" });
+  const { email, password } = req.body;
 
-    try {
-        const user = await db.user.findFirst({ where: { OR: [srn ? { srn } : undefined, email ? { email } : undefined] } });
-        if (!user) return res.status(401).json({ error: "User not found" });
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password are required" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
+  try {
+    const user = await db.user.findUnique({ where: { email } });
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    if (!user)
+      return res.status(401).json({ error: "User not found with this email" });
 
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV !== "development",
-            maxAge: 1000 * 60 * 60 * 24 * 7
-        });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ error: "Invalid credentials" });
 
-        res.status(200).json({
-            success: true,
-            message: "Login successful",
-            user: {
-                id: user.id,
-                srn: user.srn,
-                email: user.email
-            }
-        });
-    } catch (err) {
-        console.error("Login error:", err);
-        res.status(500).json({ error: "Internal server error" });
-    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV !== "development",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        srn: user.srn,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const logout = async (req, res) => {

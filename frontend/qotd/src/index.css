@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+
+/* Optional: custom styling for inputs and buttons */
+.input {
+  @apply px-4 py-2 rounded-md border border-gray-300 bg-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7b3e19];
+}
+
+.btn-primary {
+  @apply px-5 py-2 rounded-full font-medium bg-[#7b3e19] text-white hover:bg-[#633213] transition duration-200;
+}
+/* index.css */
+html {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+  background-color: #fdf6f0;
+  color: #1a1a1a;
+}
+
+html.dark body {
+  background-color: #1e1e2f;
+  color: #fbcfe8;
+}

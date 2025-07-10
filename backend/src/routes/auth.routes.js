@@ -9,9 +9,9 @@ authRoutes.post("/login" , login)
 
 authRoutes.post("/logout" ,authMiddleware, logout)
 
-authRoutes.get("/forgot-password" , forgotPassword)
+authRoutes.post("/forgot-password" , forgotPassword)
 
-authRoutes.get("/verify" , verifyOtp);
+authRoutes.post("/verify" , verifyOtp);
 
 
 
