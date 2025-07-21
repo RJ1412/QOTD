@@ -19,11 +19,11 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  login: async ({ srn, email, password }) => {
+  login: async ({ email, password }) => {
   try {
     const res = await axios.post(
       `${BASE_URL}/api/v1/auth/login`,
-      { srn, email, password },
+      { email, password },
       { withCredentials: true }
     );
     set({ authUser: res.data.user });
