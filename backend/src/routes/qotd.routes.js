@@ -1,7 +1,6 @@
 import express from "express";
 
 import {
-  getDailyUniqueCodeforcesQuestion,
   linkCodeforcesHandle,
   getTodayQuestion,
   UpdatePoints,
@@ -9,13 +8,14 @@ import {
   getAllQuestions,
   getRecentSubmissionsFromCF,
   getHandle,
+  generateGlobalQOTD,
 } from "../controllers/qotd.controllers.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const qotdRoutes = express.Router();
 
 qotdRoutes.post("/link-cf", authMiddleware, linkCodeforcesHandle);
-qotdRoutes.get("/get-questions", authMiddleware, getDailyUniqueCodeforcesQuestion);
+qotdRoutes.get("/get-questions",  generateGlobalQOTD);
 qotdRoutes.get("/today", authMiddleware, getTodayQuestion);
 qotdRoutes.post("/update-status", UpdatePoints);
 qotdRoutes.get("/leaderboard", authMiddleware, getLeaderboard);

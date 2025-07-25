@@ -50,9 +50,8 @@ export const linkCodeforcesHandle = async (req, res) => {
 };
 
 
-export const getDailyUniqueCodeforcesQuestion = async (req, res) => {
-  const userId = req.user.id;
-
+// New controller
+export const generateGlobalQOTD = async (req, res) => {
   try {
     const cfRes = await fetch("https://codeforces.com/api/problemset.problems");
     const data = await cfRes.json();
@@ -70,28 +69,7 @@ export const getDailyUniqueCodeforcesQuestion = async (req, res) => {
         problem.index
     );
 
-    if (filtered.length === 0) {
-      return res.status(404).json({ error: "No problems found in rating range" });
-    }
-    const previousSubmissions = await db.submission.findMany({
-      where: { userId },
-      include: { question: true },
-    });
-
-    const seenIds = new Set(
-      previousSubmissions.map((s) => `${s.question.codeforcesId}-${s.question.title}`)
-    );
-
-    const unseen = filtered.filter(
-      (q) => !seenIds.has(`${q.contestId}-${q.name}`)
-    );
-
-    if (unseen.length === 0) {
-      return res.status(404).json({ error: "You've exhausted all unique questions in this range" });
-    }
-
-    
-    const chosen = unseen[Math.floor(Math.random() * unseen.length)];
+    const chosen = filtered[Math.floor(Math.random() * filtered.length)];
     const link = `https://codeforces.com/contest/${chosen.contestId}/problem/${chosen.index}`;
 
     let question = await db.question.findFirst({
@@ -112,14 +90,6 @@ export const getDailyUniqueCodeforcesQuestion = async (req, res) => {
       });
     }
 
-    await db.submission.create({
-      data: {
-        userId,
-        questionId: question.id,
-        status: "PENDING",
-      },
-    });
-
     return res.status(200).json({
       success: true,
       question: {
@@ -130,10 +100,11 @@ export const getDailyUniqueCodeforcesQuestion = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error generating unique CF question:", error);
+    console.error("❌ Error generating global QOTD:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 export const getHandle = async (req, res) => {
   try {
