@@ -2266,16 +2266,19 @@ export namespace Prisma {
 
   export type QuestionAvgAggregateOutputType = {
     codeforcesId: number | null
+    rating: number | null
   }
 
   export type QuestionSumAggregateOutputType = {
     codeforcesId: number | null
+    rating: number | null
   }
 
   export type QuestionMinAggregateOutputType = {
     id: string | null
     title: string | null
     codeforcesId: number | null
+    rating: number | null
     link: string | null
     date: Date | null
     createdAt: Date | null
@@ -2285,6 +2288,7 @@ export namespace Prisma {
     id: string | null
     title: string | null
     codeforcesId: number | null
+    rating: number | null
     link: string | null
     date: Date | null
     createdAt: Date | null
@@ -2294,6 +2298,7 @@ export namespace Prisma {
     id: number
     title: number
     codeforcesId: number
+    rating: number
     link: number
     date: number
     createdAt: number
@@ -2303,16 +2308,19 @@ export namespace Prisma {
 
   export type QuestionAvgAggregateInputType = {
     codeforcesId?: true
+    rating?: true
   }
 
   export type QuestionSumAggregateInputType = {
     codeforcesId?: true
+    rating?: true
   }
 
   export type QuestionMinAggregateInputType = {
     id?: true
     title?: true
     codeforcesId?: true
+    rating?: true
     link?: true
     date?: true
     createdAt?: true
@@ -2322,6 +2330,7 @@ export namespace Prisma {
     id?: true
     title?: true
     codeforcesId?: true
+    rating?: true
     link?: true
     date?: true
     createdAt?: true
@@ -2331,6 +2340,7 @@ export namespace Prisma {
     id?: true
     title?: true
     codeforcesId?: true
+    rating?: true
     link?: true
     date?: true
     createdAt?: true
@@ -2427,6 +2437,7 @@ export namespace Prisma {
     id: string
     title: string
     codeforcesId: number
+    rating: number
     link: string
     date: Date
     createdAt: Date
@@ -2455,6 +2466,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     codeforcesId?: boolean
+    rating?: boolean
     link?: boolean
     date?: boolean
     createdAt?: boolean
@@ -2466,6 +2478,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     codeforcesId?: boolean
+    rating?: boolean
     link?: boolean
     date?: boolean
     createdAt?: boolean
@@ -2475,6 +2488,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     codeforcesId?: boolean
+    rating?: boolean
     link?: boolean
     date?: boolean
     createdAt?: boolean
@@ -2484,12 +2498,13 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     codeforcesId?: boolean
+    rating?: boolean
     link?: boolean
     date?: boolean
     createdAt?: boolean
   }
 
-  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "codeforcesId" | "link" | "date" | "createdAt", ExtArgs["result"]["question"]>
+  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "codeforcesId" | "rating" | "link" | "date" | "createdAt", ExtArgs["result"]["question"]>
   export type QuestionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submissions?: boolean | Question$submissionsArgs<ExtArgs>
     _count?: boolean | QuestionCountOutputTypeDefaultArgs<ExtArgs>
@@ -2506,6 +2521,7 @@ export namespace Prisma {
       id: string
       title: string
       codeforcesId: number
+      rating: number
       link: string
       date: Date
       createdAt: Date
@@ -2936,6 +2952,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Question", 'String'>
     readonly title: FieldRef<"Question", 'String'>
     readonly codeforcesId: FieldRef<"Question", 'Int'>
+    readonly rating: FieldRef<"Question", 'Int'>
     readonly link: FieldRef<"Question", 'String'>
     readonly date: FieldRef<"Question", 'DateTime'>
     readonly createdAt: FieldRef<"Question", 'DateTime'>
@@ -4515,6 +4532,7 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     codeforcesId: 'codeforcesId',
+    rating: 'rating',
     link: 'link',
     date: 'date',
     createdAt: 'createdAt'
@@ -4719,6 +4737,7 @@ export namespace Prisma {
     id?: StringFilter<"Question"> | string
     title?: StringFilter<"Question"> | string
     codeforcesId?: IntFilter<"Question"> | number
+    rating?: IntFilter<"Question"> | number
     link?: StringFilter<"Question"> | string
     date?: DateTimeFilter<"Question"> | Date | string
     createdAt?: DateTimeFilter<"Question"> | Date | string
@@ -4729,6 +4748,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     codeforcesId?: SortOrder
+    rating?: SortOrder
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
@@ -4743,6 +4763,7 @@ export namespace Prisma {
     NOT?: QuestionWhereInput | QuestionWhereInput[]
     title?: StringFilter<"Question"> | string
     codeforcesId?: IntFilter<"Question"> | number
+    rating?: IntFilter<"Question"> | number
     link?: StringFilter<"Question"> | string
     createdAt?: DateTimeFilter<"Question"> | Date | string
     submissions?: SubmissionListRelationFilter
@@ -4752,6 +4773,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     codeforcesId?: SortOrder
+    rating?: SortOrder
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
@@ -4769,6 +4791,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Question"> | string
     title?: StringWithAggregatesFilter<"Question"> | string
     codeforcesId?: IntWithAggregatesFilter<"Question"> | number
+    rating?: IntWithAggregatesFilter<"Question"> | number
     link?: StringWithAggregatesFilter<"Question"> | string
     date?: DateTimeWithAggregatesFilter<"Question"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Question"> | Date | string
@@ -4932,6 +4955,7 @@ export namespace Prisma {
     id?: string
     title: string
     codeforcesId: number
+    rating?: number
     link: string
     date: Date | string
     createdAt?: Date | string
@@ -4942,6 +4966,7 @@ export namespace Prisma {
     id?: string
     title: string
     codeforcesId: number
+    rating?: number
     link: string
     date: Date | string
     createdAt?: Date | string
@@ -4952,6 +4977,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4962,6 +4988,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4972,6 +4999,7 @@ export namespace Prisma {
     id?: string
     title: string
     codeforcesId: number
+    rating?: number
     link: string
     date: Date | string
     createdAt?: Date | string
@@ -4981,6 +5009,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4990,6 +5019,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5238,6 +5268,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     codeforcesId?: SortOrder
+    rating?: SortOrder
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
@@ -5245,12 +5276,14 @@ export namespace Prisma {
 
   export type QuestionAvgOrderByAggregateInput = {
     codeforcesId?: SortOrder
+    rating?: SortOrder
   }
 
   export type QuestionMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     codeforcesId?: SortOrder
+    rating?: SortOrder
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
@@ -5260,6 +5293,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     codeforcesId?: SortOrder
+    rating?: SortOrder
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
@@ -5267,6 +5301,7 @@ export namespace Prisma {
 
   export type QuestionSumOrderByAggregateInput = {
     codeforcesId?: SortOrder
+    rating?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -5799,6 +5834,7 @@ export namespace Prisma {
     id?: string
     title: string
     codeforcesId: number
+    rating?: number
     link: string
     date: Date | string
     createdAt?: Date | string
@@ -5808,6 +5844,7 @@ export namespace Prisma {
     id?: string
     title: string
     codeforcesId: number
+    rating?: number
     link: string
     date: Date | string
     createdAt?: Date | string
@@ -5868,6 +5905,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5877,6 +5915,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     codeforcesId?: IntFieldUpdateOperationsInput | number
+    rating?: IntFieldUpdateOperationsInput | number
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

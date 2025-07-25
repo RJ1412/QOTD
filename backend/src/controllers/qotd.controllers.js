@@ -132,19 +132,28 @@ export const getHandle = async (req, res) => {
 
 export const getTodayQuestion = async (req, res) => {
   try {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0); 
+    const now = new Date();
 
-    const question = await db.question.findUnique({
-      where: { date: today },
+    const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59));
+
+    const question = await db.question.findFirst({
+      where: {
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
     });
 
-    if (!question) return res.status(404).json({ error: "No question available today" });
+    if (!question) {
+      return res.status(404).json({ error: "No question available today" });
+    }
 
     return res.status(200).json({ question });
   } catch (error) {
     console.error("getTodayQuestion error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 

@@ -29,6 +29,7 @@ model Question {
   id            String       @id @default(uuid())
   title         String
   codeforcesId  Int
+  rating            Int        @default(0)
   link          String
   date          DateTime     @unique // one question per day (globally)
   createdAt     DateTime     @default(now())

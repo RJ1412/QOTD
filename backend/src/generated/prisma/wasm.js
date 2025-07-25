@@ -136,6 +136,7 @@ exports.Prisma.QuestionScalarFieldEnum = {
   id: 'id',
   title: 'title',
   codeforcesId: 'codeforcesId',
+  rating: 'rating',
   link: 'link',
   date: 'date',
   createdAt: 'createdAt'
