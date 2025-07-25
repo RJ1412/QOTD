@@ -11,10 +11,19 @@ import {
   Code2,
   ShieldCheck,
   Link2,
+  Pencil,
+  X,
 } from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+
 
 export default function DashboardPage() {
   const [handle, setHandle] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
+  const [editedImage, setEditedImage] = useState("");
 
   const {
     todaysQuestion,
@@ -25,38 +34,73 @@ export default function DashboardPage() {
     fetchAllQuestions,
     verifyAndAward,
     linkHandle,
-    fetchLinkedHandle,
-    loading,
-    error,
     fetchSubmissions,
     submissions,
-    linkedHandle,
   } = useQotdStore();
 
-  const { authUser, logout } = useAuthStore();
+  const { authUser, logout, setAuthUser } = useAuthStore();
 
   useEffect(() => {
     fetchTodaysQuestion();
     fetchLeaderboard();
     fetchAllQuestions();
     fetchSubmissions();
-    fetchLinkedHandle();
+
+    if (authUser) {
+      setEditedName(authUser.name || "");
+      setEditedEmail(authUser.email || "");
+      setEditedImage(authUser.profileImage || "");
+    }
+
+    if (!authUser.codeforcesHandle) {
+      fetchLinkedHandle().then((res) => {
+        if (res?.cfHandle) {
+          setAuthUser({ ...authUser, codeforcesHandle: res.cfHandle });
+        }
+      });
+    }
+  
+
   }, []);
 
-  const handleUpdateStatus = async () => {
-    await verifyAndAward();
+  const handleLink = async () => {
+    if (!handle) return;
+    try {
+      const res = await linkHandle(handle);
+      if (res?.success && res.updatedUser) {
+        setAuthUser(res.updatedUser);
+        setHandle("");
+        toast.success("Codeforces handle linked!");
+      } else {
+        toast.error("Failed to link Codeforces handle.");
+      }
+    } catch (err) {
+      console.error("Error linking handle", err);
+      toast.error("Something went wrong while linking.");
+    }
+  };
+
+
+
+  const handleUpdateStatus = async (title) => {
+    if (!authUser?.codeforcesHandle) {
+      toast.error("⚠️ Link your Codeforces handle first");
+      return;
+    }
+
+    const res = await verifyAndAward(title, authUser.codeforcesHandle);
+
+    if (res?.status === "ACCEPTED") {
+      toast.success("✅ Solved!");
+    } else if (res?.status === "REJECTED") {
+      toast.error("❌ Not solved yet on Codeforces");
+    }
+
     fetchLeaderboard();
     fetchSubmissions();
   };
 
-  const handleLink = async () => {
-    if (!handle) return;
-    const res = await linkHandle(handle);
-    if (res?.success) {
-      setHandle("");
-      fetchLinkedHandle();
-    }
-  };
+
 
   const getStatusColor = (questionTitle) => {
     if (!Array.isArray(submissions)) return "bg-gray-200";
@@ -67,25 +111,96 @@ export default function DashboardPage() {
 
   const displayCount = leaderboard?.length >= 3 ? 3 : leaderboard?.length || 0;
 
+  const handleSaveChanges = async () => {
+    try {
+      const response = await axios.put("/api/user/update-profile", {
+        name: editedName,
+        email: editedEmail,
+        profileImage: editedImage,
+      });
+
+      if (response.data.success) {
+        setAuthUser(response.data.updatedUser);
+        setIsModalOpen(false);
+      }
+    } catch (err) {
+      console.error("Failed to update profile", err);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white p-6 md:p-8 font-mono">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white p-6 md:p-8 font-mono relative">
+      {/* Edit Profile Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+          <div className="bg-gray-900 p-6 rounded-2xl shadow-2xl w-[90%] max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+              <button onClick={() => setIsModalOpen(false)}>
+                <X className="text-red-500 hover:text-red-600" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Name"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={editedEmail}
+                onChange={(e) => setEditedEmail(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+              <input
+                type="text"
+                placeholder="Profile Image URL"
+                value={editedImage}
+                onChange={(e) => setEditedImage(e.target.value)}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+              <button
+                onClick={handleSaveChanges}
+                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-cyan-400 flex items-center gap-2">
-          <TerminalSquare className="text-cyan-500" />
-          Welcome, {authUser?.srn || authUser?.email || "Coder"}!
-        </h1>
-        <button onClick={logout} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 transition text-white rounded-lg font-bold">
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-cyan-400 flex items-center gap-2">
+            <TerminalSquare className="text-cyan-500" />
+            Welcome, {authUser?.srn || authUser?.email || "Coder"}!
+          </h1>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-yellow-400 hover:text-yellow-300 transition"
+          >
+            <Pencil size={20} />
+          </button>
+        </div>
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 transition text-white rounded-lg font-bold"
+        >
           <LogOut size={18} /> Logout
         </button>
       </div>
 
-      {/* CF Handle Section */}
+      {/* Codeforces Handle Linking */}
       <div className="mb-8 bg-gray-900 p-4 rounded-xl shadow-lg flex flex-col md:flex-row md:items-center gap-4">
         <Link2 className="text-pink-400" size={20} />
-        {linkedHandle ? (
+        {authUser?.codeforcesHandle ? (
           <p className="text-green-400 font-semibold">
-            Linked Handle: <span className="text-white">{linkedHandle}</span>
+            Linked Handle: <span className="text-white">{authUser.codeforcesHandle}</span>
           </p>
         ) : (
           <>
@@ -104,12 +219,12 @@ export default function DashboardPage() {
             </button>
           </>
         )}
-        {linkedHandle && (
+        {authUser?.codeforcesHandle && (
           <p className="text-xs text-gray-400 italic">Once linked, it cannot be changed.</p>
         )}
       </div>
 
-      {/* Dashboard Icons */}
+      {/* Icons */}
       <div className="flex gap-6 text-cyan-300 text-xl mb-6 animate-pulse">
         <UserCircle2 />
         <ListOrdered />
@@ -118,16 +233,18 @@ export default function DashboardPage() {
         <ShieldCheck />
       </div>
 
-      {/* Main Dashboard Grid */}
+      {/* Grid: QOTD + Leaderboard */}
       <div className="grid md:grid-cols-2 gap-8">
-        {/* QOTD Section */}
+        {/* QOTD */}
         <div className="bg-gray-800 p-6 rounded-xl shadow-2xl">
           <h2 className="text-2xl font-bold text-purple-400 mb-4">Question of the Day</h2>
           {todaysQuestion ? (
             <>
               <p className="text-xl font-semibold mb-2 text-white">{todaysQuestion.title}</p>
               <p className="text-sm text-gray-400 mb-1">Rating: {todaysQuestion.rating || "N/A"}</p>
-              <p className="text-sm text-gray-400 mb-4">Tags: {todaysQuestion.tags?.join(", ") || "None"}</p>
+              <p className="text-sm text-gray-400 mb-4">
+                Tags: {todaysQuestion.tags?.join(", ") || "None"}
+              </p>
               <div className="flex gap-4">
                 <a
                   href={todaysQuestion.link}
@@ -150,9 +267,11 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Leaderboard Section */}
+        {/* Leaderboard */}
         <div className="bg-gray-800 p-6 rounded-xl shadow-2xl">
-          <h2 className="text-2xl font-bold text-orange-400 mb-4">Top {displayCount} Leader{displayCount === 1 ? "" : "s"}</h2>
+          <h2 className="text-2xl font-bold text-orange-400 mb-4">
+            Top {displayCount} Leader{displayCount === 1 ? "" : "s"}
+          </h2>
           {displayCount > 0 ? (
             <>
               <table className="w-full text-sm">
@@ -172,10 +291,7 @@ export default function DashboardPage() {
                 </tbody>
               </table>
               {leaderboard.length > displayCount && (
-                <Link
-                  to="/leaderboard"
-                  className="mt-4 inline-block text-sm text-blue-400 underline"
-                >
+                <Link to="/leaderboard" className="mt-4 inline-block text-sm text-blue-400 underline">
                   View Full Leaderboard
                 </Link>
               )}
@@ -186,7 +302,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* All Questions Table */}
+      {/* All Questions */}
       <div className="mt-10 bg-gray-800 p-6 rounded-xl shadow-2xl">
         <h2 className="text-2xl font-bold text-yellow-400 mb-4">All Questions</h2>
         {allQuestions && allQuestions.length > 0 ? (
@@ -216,11 +332,13 @@ export default function DashboardPage() {
                         Visit
                       </a>
                       <button
-                        onClick={handleUpdateStatus}
-                        className={`px-3 py-1 rounded-md transition ${getStatusColor(q.title)}`}
-                      >
-                        Check
-                      </button>
+  onClick={() => handleUpdateStatus(q.title)}
+  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+>
+  Check Submission
+</button>
+
+
                     </td>
                   </tr>
                 ))}

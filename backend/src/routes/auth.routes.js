@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register ,logout ,verifyOtp, forgotPassword  } from "../controllers/auth.controllers.js";
+import { login, register ,logout ,verifyOtp, forgotPassword, getCurrentUser  } from "../controllers/auth.controllers.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 const authRoutes = express.Router();
 
@@ -14,5 +14,5 @@ authRoutes.post("/forgot-password" , forgotPassword)
 authRoutes.post("/verify" , verifyOtp);
 
 
-
+authRoutes.get("/me",authMiddleware, getCurrentUser)
 export default authRoutes;

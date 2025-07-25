@@ -17,7 +17,7 @@ const qotdRoutes = express.Router();
 qotdRoutes.post("/link-cf", authMiddleware, linkCodeforcesHandle);
 qotdRoutes.get("/get-questions", authMiddleware, getDailyUniqueCodeforcesQuestion);
 qotdRoutes.get("/today", authMiddleware, getTodayQuestion);
-qotdRoutes.post("/update-status", authMiddleware, UpdatePoints);
+qotdRoutes.post("/update-status", UpdatePoints);
 qotdRoutes.get("/leaderboard", authMiddleware, getLeaderboard);
 qotdRoutes.get("/all", authMiddleware, getAllQuestions);
 qotdRoutes.get("/submission", authMiddleware, getRecentSubmissionsFromCF);

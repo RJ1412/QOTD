@@ -126,6 +126,7 @@ export const login = async (req, res) => {
         id: user.id,
         srn: user.srn,
         email: user.email,
+        codeforcesHandle: user.codeforcesHandle,
       },
     });
   } catch (err) {
@@ -146,6 +147,22 @@ export const logout = async (req, res) => {
         console.error("Logout error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
+};
+
+// authController.js
+export const getCurrentUser = async (req, res) => {
+  try {
+    const user = await db.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, srn: true, email: true, codeforcesHandle: true }
+    });
+    if (!user) return res.status(401).json({ error: "Not authenticated" });
+
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error("Auth check error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
 };
 
 

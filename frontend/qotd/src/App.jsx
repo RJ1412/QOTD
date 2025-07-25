@@ -2,32 +2,39 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
-
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
-  const { authUser, checkAuth } = useAuthStore();
+  const { authUser, loading, checkAuth } = useAuthStore();
 
-  // On mount, verify whether the user is logged in
   useEffect(() => {
     checkAuth();
   }, []);
 
-  return (
-    <Routes>
-      {/* Public homepage */}
-      <Route path="/" element={<HomePage />} />
+  if (loading) {
+    return (
+      <div className="h-screen flex justify-center items-center text-white bg-black">
+        Loading...
+      </div>
+    );
+  }
 
-      {/* Dashboard: only accessible if authUser is truthy */}
-      <Route
-        path="/dashboard"
-        element={
-          authUser
-            ? <DashboardPage />
-            : <Navigate to="/" replace />
-        }
-      />
-    </Routes>
+  return (
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            authUser
+              ? <DashboardPage />
+              : <Navigate to="/" replace />
+          }
+        />
+      </Routes>
+    </>
   );
 }

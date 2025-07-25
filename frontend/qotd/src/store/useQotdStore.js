@@ -106,24 +106,28 @@ export const useQotdStore = create((set, get) => ({
   },
 
   // ✅ Verify solution + award points
-  verifyAndAward: async () => {
-    set({ loading: true, error: null });
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/api/v1/qotd/update-status`,
-        {},
-        { withCredentials: true }
-      );
-      return res.data;
-    } catch (error) {
-      set({
-        error:
-          error.response?.data?.error || "Failed to verify submission",
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
+verifyAndAward: async (questionTitle, codeforcesHandle) => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axios.post(
+      `${BASE_URL}/api/v1/qotd/update-status`,
+      { questionTitle, codeforcesHandle },
+      { withCredentials: true }
+    );
+    return res.data;
+  } catch (error) {
+    set({
+      error:
+        error.response?.data?.message ||
+        "Failed to verify Codeforces submission",
+    });
+    return null;
+  } finally {
+    set({ loading: false });
+  }
+}
+,
+
 
   // ✅ Fetch linked Codeforces handle
   fetchLinkedHandle: async () => {

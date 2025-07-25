@@ -6,18 +6,25 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const useAuthStore = create((set) => ({
   authUser: null,
-  isCheckingAuth: true,
+  loading: true, 
 
   checkAuth: async () => {
+    set({ loading: true }); 
     try {
-      const res = await axios.get(`${BASE_URL}/api/v1/auth/me`, {
-        withCredentials: true,
+      const res = await fetch(`${BASE_URL}/api/v1/auth/me`, {
+        method: "GET",
+        credentials: "include", 
       });
-      set({ authUser: res.data.user, isCheckingAuth: false });
+
+      if (!res.ok) throw new Error("Not authenticated");
+
+      const data = await res.json();
+      set({ authUser: data.user, loading: false });
     } catch (err) {
-      set({ authUser: null, isCheckingAuth: false });
+      set({ authUser: null, loading: false }); 
     }
   },
+
 
   login: async ({ email, password }) => {
   try {
@@ -28,10 +35,10 @@ export const useAuthStore = create((set) => ({
     );
     set({ authUser: res.data.user });
     toast.success(res.data.message || "Login successful");
-    return { success: true }; // ✅ Add this
+    return { success: true }; 
   } catch (err) {
     toast.error(err.response?.data?.error || "Login failed");
-    return { success: false }; // ✅ Add this
+    return { success: false }; 
   }
 },
 
@@ -41,7 +48,9 @@ export const useAuthStore = create((set) => ({
         srn,
         email,
         password,
-      });
+      }, {
+  withCredentials: true,
+});
       toast.success(res.data.message || "OTP sent to your email");
     } catch (err) {
       toast.error(err.response?.data?.error || "Signup failed");
@@ -53,7 +62,9 @@ export const useAuthStore = create((set) => ({
       const res = await axios.post(`${BASE_URL}/api/v1/auth/verify`, {
         email,
         otp,
-      });
+      }, {
+  withCredentials: true,
+});
       set({ authUser: res.data.user });
       toast.success(res.data.message || "Account verified");
     } catch (err) {
@@ -73,7 +84,9 @@ export const useAuthStore = create((set) => ({
 
   forgotPassword: async (email) => {
     try {
-      const res = await axios.post(`${BASE_URL}/api/v1/auth/forgot-password`, { email });
+      const res = await axios.post(`${BASE_URL}/api/v1/auth/forgot-password`, { email }, {
+  withCredentials: true,
+});
       toast.success(res.data.message || "OTP sent to your email");
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to send reset OTP");
@@ -86,7 +99,9 @@ export const useAuthStore = create((set) => ({
         email,
         otp,
         newPassword,
-      });
+      }, {
+  withCredentials: true,
+});
       toast.success(res.data.message || "Password reset successful");
     } catch (err) {
       toast.error(err.response?.data?.error || "Reset failed");

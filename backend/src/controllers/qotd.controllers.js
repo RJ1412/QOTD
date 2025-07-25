@@ -1,5 +1,5 @@
 import { db } from "../libs/db.js";
-
+import axios from "axios";
 export const linkCodeforcesHandle = async (req, res) => {
   const { handle } = req.body;
   const userId = req.user.id;
@@ -35,8 +35,12 @@ export const linkCodeforcesHandle = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "Codeforces profile linked successfully",
-      profile: data.result[0],
+      message: "Codeforces handle linked successfully",
+       success: true,
+  updatedUser: {
+    ...user,
+    codeforcesHandle: handle,
+  },
     });
 
   } catch (error) {
@@ -173,86 +177,96 @@ export const getTodayQuestion = async (req, res) => {
   }
 };
 
+
 export const UpdatePoints = async (req, res) => {
-  const userId = req.user.id;
-
   try {
-    // Get today's question
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    const { questionTitle, codeforcesHandle } = req.body;
 
-    const question = await db.question.findUnique({
-      where: { date: today },
+    if (!questionTitle || !codeforcesHandle) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Get question from DB
+    const question = await db.question.findFirst({
+      where: { title: questionTitle },
     });
 
     if (!question) {
-      return res.status(404).json({ error: "No question available today" });
+      return res.status(404).json({ message: "Question not found" });
     }
 
+    // Get user from DB
     const user = await db.user.findUnique({
-      where: { id: userId },
+      where: { codeforcesHandle },
     });
 
-    if (!user || !user.codeforcesHandle) {
-      return res.status(400).json({ error: "User handle not linked" });
+    if (!user) {
+      return res.status(404).json({ message: "User with handle not found" });
     }
 
-    // Fetch user's Codeforces submissions
-    const cfRes = await fetch(`https://codeforces.com/api/user.status?handle=${user.codeforcesHandle}`);
-    const data = await cfRes.json();
+    const codeforcesId = question.codeforcesId;
 
-    if (data.status !== "OK") {
-      return res.status(502).json({ error: "Failed to fetch submissions from Codeforces" });
-    }
+    // Fetch latest submissions
+    const { data } = await axios.get(
+      `https://codeforces.com/api/user.status?handle=${codeforcesHandle}`
+    );
 
-    const matched = data.result.find((sub) => {
+    const solved = data.result.some((submission) => {
       return (
-        sub.verdict === "OK" &&
-        sub.problem.contestId === question.codeforcesId &&
-        sub.problem.name === question.title
+        submission.verdict === "OK" &&
+        submission.problem.contestId === codeforcesId
       );
     });
 
-    if (!matched) {
-      return res.status(400).json({ error: "No successful submission found for today’s question" });
+    if (!solved) {
+      return res.status(200).json({ status: "REJECTED" });
     }
 
-    // Check local submission
+    // Check if already submitted
     const existingSubmission = await db.submission.findUnique({
       where: {
         userId_questionId: {
-          userId,
+          userId: user.id,
           questionId: question.id,
         },
       },
     });
 
     if (!existingSubmission) {
-      return res.status(404).json({ error: "No local submission found" });
+      // Create submission
+      await db.submission.create({
+        data: {
+          userId: user.id,
+          questionId: question.id,
+          status: "ACCEPTED",
+          score: 100,
+        },
+      });
+    } else if (existingSubmission.status !== "ACCEPTED") {
+      // Update status
+      await db.submission.update({
+        where: {
+          userId_questionId: {
+            userId: user.id,
+            questionId: question.id,
+          },
+        },
+        data: {
+          status: "ACCEPTED",
+          score: 100,
+        },
+      });
     }
 
-    if (existingSubmission.status === "ACCEPTED") {
-      return res.status(400).json({ error: "Already accepted" });
-    }
+    return res.status(200).json({ status: "ACCEPTED" });
+  } catch (err) {
+    console.error("❌ Error in UpdatePoints:", err.message);
+    console.error("❌ Error in UpdatePoints:", err);
 
-    // Mark as accepted and update points
-    const updatedSubmission = await db.submission.update({
-      where: { id: existingSubmission.id },
-      data: {
-        status: "ACCEPTED",
-        score: 10,
-      },
-    });
-
-    return res.status(200).json({
-      message: "Verified and points awarded",
-      submission: updatedSubmission,
-    });
-  } catch (error) {
-    console.error("UpdatePoints error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const getLeaderboard = async (req, res) => {
   try {
