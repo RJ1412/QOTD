@@ -69,6 +69,26 @@ export const useQotdStore = create((set, get) => ({
     }
   },
 
+fetchEditorialIfAllowed: async (questionTitle, codeforcesHandle) => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axios.post(
+      `${BASE_URL}/api/v1/qotd/editorial`,
+      { questionTitle, codeforcesHandle },
+      { withCredentials: true }
+    );
+    set({ editorialContent: res.data.editorial });
+  } catch (error) {
+    set({
+      error:
+        error.response?.data?.error || "Failed to fetch editorial content",
+    });
+  } finally {
+    set({ loading: false });
+  }
+},
+
+
   // ✅ Fetch leaderboard
   fetchLeaderboard: async () => {
     set({ loading: true, error: null });

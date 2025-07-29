@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-cron.schedule("*00 00 * * *", async () => {
+cron.schedule("00 00 * * *", async () => {
   try {
     console.log("🔔 Running QOTD Fetch Job...");
 

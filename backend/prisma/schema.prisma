@@ -33,7 +33,7 @@ model Question {
   link          String
   date          DateTime     @unique // one question per day (globally)
   createdAt     DateTime     @default(now())
-
+    editorialUrl String?
   submissions   Submission[]
 }
 

@@ -139,7 +139,8 @@ exports.Prisma.QuestionScalarFieldEnum = {
   rating: 'rating',
   link: 'link',
   date: 'date',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  editorialUrl: 'editorialUrl'
 };
 
 exports.Prisma.SubmissionScalarFieldEnum = {

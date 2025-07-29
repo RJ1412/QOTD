@@ -9,6 +9,7 @@ import {
   getRecentSubmissionsFromCF,
   getHandle,
   generateGlobalQOTD,
+  getEditorialIfAllowed,
 } from "../controllers/qotd.controllers.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -22,5 +23,5 @@ qotdRoutes.get("/leaderboard", authMiddleware, getLeaderboard);
 qotdRoutes.get("/all", authMiddleware, getAllQuestions);
 qotdRoutes.get("/submission", authMiddleware, getRecentSubmissionsFromCF);
 qotdRoutes.get("/cf-handle", authMiddleware, getHandle);
-
+qotdRoutes.post("/editorial", getEditorialIfAllowed);
 export default qotdRoutes;

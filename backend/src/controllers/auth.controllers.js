@@ -149,7 +149,7 @@ export const logout = async (req, res) => {
     }
 };
 
-// authController.js
+
 export const getCurrentUser = async (req, res) => {
   try {
     const user = await db.user.findUnique({

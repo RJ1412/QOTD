@@ -2282,6 +2282,7 @@ export namespace Prisma {
     link: string | null
     date: Date | null
     createdAt: Date | null
+    editorialUrl: string | null
   }
 
   export type QuestionMaxAggregateOutputType = {
@@ -2292,6 +2293,7 @@ export namespace Prisma {
     link: string | null
     date: Date | null
     createdAt: Date | null
+    editorialUrl: string | null
   }
 
   export type QuestionCountAggregateOutputType = {
@@ -2302,6 +2304,7 @@ export namespace Prisma {
     link: number
     date: number
     createdAt: number
+    editorialUrl: number
     _all: number
   }
 
@@ -2324,6 +2327,7 @@ export namespace Prisma {
     link?: true
     date?: true
     createdAt?: true
+    editorialUrl?: true
   }
 
   export type QuestionMaxAggregateInputType = {
@@ -2334,6 +2338,7 @@ export namespace Prisma {
     link?: true
     date?: true
     createdAt?: true
+    editorialUrl?: true
   }
 
   export type QuestionCountAggregateInputType = {
@@ -2344,6 +2349,7 @@ export namespace Prisma {
     link?: true
     date?: true
     createdAt?: true
+    editorialUrl?: true
     _all?: true
   }
 
@@ -2441,6 +2447,7 @@ export namespace Prisma {
     link: string
     date: Date
     createdAt: Date
+    editorialUrl: string | null
     _count: QuestionCountAggregateOutputType | null
     _avg: QuestionAvgAggregateOutputType | null
     _sum: QuestionSumAggregateOutputType | null
@@ -2470,6 +2477,7 @@ export namespace Prisma {
     link?: boolean
     date?: boolean
     createdAt?: boolean
+    editorialUrl?: boolean
     submissions?: boolean | Question$submissionsArgs<ExtArgs>
     _count?: boolean | QuestionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["question"]>
@@ -2482,6 +2490,7 @@ export namespace Prisma {
     link?: boolean
     date?: boolean
     createdAt?: boolean
+    editorialUrl?: boolean
   }, ExtArgs["result"]["question"]>
 
   export type QuestionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2492,6 +2501,7 @@ export namespace Prisma {
     link?: boolean
     date?: boolean
     createdAt?: boolean
+    editorialUrl?: boolean
   }, ExtArgs["result"]["question"]>
 
   export type QuestionSelectScalar = {
@@ -2502,9 +2512,10 @@ export namespace Prisma {
     link?: boolean
     date?: boolean
     createdAt?: boolean
+    editorialUrl?: boolean
   }
 
-  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "codeforcesId" | "rating" | "link" | "date" | "createdAt", ExtArgs["result"]["question"]>
+  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "codeforcesId" | "rating" | "link" | "date" | "createdAt" | "editorialUrl", ExtArgs["result"]["question"]>
   export type QuestionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submissions?: boolean | Question$submissionsArgs<ExtArgs>
     _count?: boolean | QuestionCountOutputTypeDefaultArgs<ExtArgs>
@@ -2525,6 +2536,7 @@ export namespace Prisma {
       link: string
       date: Date
       createdAt: Date
+      editorialUrl: string | null
     }, ExtArgs["result"]["question"]>
     composites: {}
   }
@@ -2956,6 +2968,7 @@ export namespace Prisma {
     readonly link: FieldRef<"Question", 'String'>
     readonly date: FieldRef<"Question", 'DateTime'>
     readonly createdAt: FieldRef<"Question", 'DateTime'>
+    readonly editorialUrl: FieldRef<"Question", 'String'>
   }
     
 
@@ -4535,7 +4548,8 @@ export namespace Prisma {
     rating: 'rating',
     link: 'link',
     date: 'date',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    editorialUrl: 'editorialUrl'
   };
 
   export type QuestionScalarFieldEnum = (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum]
@@ -4741,6 +4755,7 @@ export namespace Prisma {
     link?: StringFilter<"Question"> | string
     date?: DateTimeFilter<"Question"> | Date | string
     createdAt?: DateTimeFilter<"Question"> | Date | string
+    editorialUrl?: StringNullableFilter<"Question"> | string | null
     submissions?: SubmissionListRelationFilter
   }
 
@@ -4752,6 +4767,7 @@ export namespace Prisma {
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
+    editorialUrl?: SortOrderInput | SortOrder
     submissions?: SubmissionOrderByRelationAggregateInput
   }
 
@@ -4766,6 +4782,7 @@ export namespace Prisma {
     rating?: IntFilter<"Question"> | number
     link?: StringFilter<"Question"> | string
     createdAt?: DateTimeFilter<"Question"> | Date | string
+    editorialUrl?: StringNullableFilter<"Question"> | string | null
     submissions?: SubmissionListRelationFilter
   }, "id" | "date">
 
@@ -4777,6 +4794,7 @@ export namespace Prisma {
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
+    editorialUrl?: SortOrderInput | SortOrder
     _count?: QuestionCountOrderByAggregateInput
     _avg?: QuestionAvgOrderByAggregateInput
     _max?: QuestionMaxOrderByAggregateInput
@@ -4795,6 +4813,7 @@ export namespace Prisma {
     link?: StringWithAggregatesFilter<"Question"> | string
     date?: DateTimeWithAggregatesFilter<"Question"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Question"> | Date | string
+    editorialUrl?: StringNullableWithAggregatesFilter<"Question"> | string | null
   }
 
   export type SubmissionWhereInput = {
@@ -4959,6 +4978,7 @@ export namespace Prisma {
     link: string
     date: Date | string
     createdAt?: Date | string
+    editorialUrl?: string | null
     submissions?: SubmissionCreateNestedManyWithoutQuestionInput
   }
 
@@ -4970,6 +4990,7 @@ export namespace Prisma {
     link: string
     date: Date | string
     createdAt?: Date | string
+    editorialUrl?: string | null
     submissions?: SubmissionUncheckedCreateNestedManyWithoutQuestionInput
   }
 
@@ -4981,6 +5002,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
     submissions?: SubmissionUpdateManyWithoutQuestionNestedInput
   }
 
@@ -4992,6 +5014,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
     submissions?: SubmissionUncheckedUpdateManyWithoutQuestionNestedInput
   }
 
@@ -5003,6 +5026,7 @@ export namespace Prisma {
     link: string
     date: Date | string
     createdAt?: Date | string
+    editorialUrl?: string | null
   }
 
   export type QuestionUpdateManyMutationInput = {
@@ -5013,6 +5037,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuestionUncheckedUpdateManyInput = {
@@ -5023,6 +5048,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SubmissionCreateInput = {
@@ -5272,6 +5298,7 @@ export namespace Prisma {
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
+    editorialUrl?: SortOrder
   }
 
   export type QuestionAvgOrderByAggregateInput = {
@@ -5287,6 +5314,7 @@ export namespace Prisma {
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
+    editorialUrl?: SortOrder
   }
 
   export type QuestionMinOrderByAggregateInput = {
@@ -5297,6 +5325,7 @@ export namespace Prisma {
     link?: SortOrder
     date?: SortOrder
     createdAt?: SortOrder
+    editorialUrl?: SortOrder
   }
 
   export type QuestionSumOrderByAggregateInput = {
@@ -5838,6 +5867,7 @@ export namespace Prisma {
     link: string
     date: Date | string
     createdAt?: Date | string
+    editorialUrl?: string | null
   }
 
   export type QuestionUncheckedCreateWithoutSubmissionsInput = {
@@ -5848,6 +5878,7 @@ export namespace Prisma {
     link: string
     date: Date | string
     createdAt?: Date | string
+    editorialUrl?: string | null
   }
 
   export type QuestionCreateOrConnectWithoutSubmissionsInput = {
@@ -5909,6 +5940,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuestionUncheckedUpdateWithoutSubmissionsInput = {
@@ -5919,6 +5951,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    editorialUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SubmissionCreateManyUserInput = {

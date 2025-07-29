@@ -1,5 +1,11 @@
 import { db } from "../libs/db.js";
 import axios from "axios";
+import * as cheerio from "cheerio"; 
+import { generateEditorialFromGemini } from "../libs/editorialGenerator.js";
+
+
+const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
+
 export const linkCodeforcesHandle = async (req, res) => {
   const { handle } = req.body;
   const userId = req.user.id;
@@ -50,9 +56,31 @@ export const linkCodeforcesHandle = async (req, res) => {
 };
 
 
-// New controller
+
+
+
+
 export const generateGlobalQOTD = async (req, res) => {
   try {
+    // Check if a question already exists for today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const existing = await db.question.findUnique({
+      where: {
+        date: today,
+      },
+    });
+
+    if (existing) {
+      return res.status(200).json({
+        success: true,
+        question: existing,
+        message: "Question already exists for today.",
+      });
+    }
+
+    // Fetch all problems from Codeforces
     const cfRes = await fetch("https://codeforces.com/api/problemset.problems");
     const data = await cfRes.json();
 
@@ -62,48 +90,132 @@ export const generateGlobalQOTD = async (req, res) => {
 
     const problems = data.result.problems;
     const filtered = problems.filter(
-      (problem) =>
-        problem.rating >= 800 &&
-        problem.rating <= 1200 &&
-        problem.contestId &&
-        problem.index
+      (p) => p.rating >= 800 && p.rating <= 1200 && p.contestId && p.index
     );
 
     const chosen = filtered[Math.floor(Math.random() * filtered.length)];
     const link = `https://codeforces.com/contest/${chosen.contestId}/problem/${chosen.index}`;
 
-    let question = await db.question.findFirst({
-      where: {
-        codeforcesId: chosen.contestId,
+    // Scrape problem statement
+    const html = await fetchProblemStatement(chosen.contestId, chosen.index);
+    const $ = cheerio.load(html);
+    const statement = $(".problem-statement").text().trim();
+
+    // Generate editorial (fallback to null)
+    let editorial = null;
+    if (statement) {
+      editorial = await generateEditorialFromGemini(statement);
+    }
+
+    // Save to DB
+    const question = await db.question.create({
+      data: {
         title: chosen.name,
+        codeforcesId: chosen.contestId,
+        link,
+        rating: chosen.rating,
+        date: today,
+        editorialUrl: editorial || null,
       },
     });
-
-    if (!question) {
-      question = await db.question.create({
-        data: {
-          title: chosen.name,
-          codeforcesId: chosen.contestId,
-          link,
-          date: new Date(),
-        },
-      });
-    }
 
     return res.status(200).json({
       success: true,
       question: {
-        title: chosen.name,
-        rating: chosen.rating,
-        tags: chosen.tags,
-        link,
+        id: question.id,
+        title: question.title,
+        rating: question.rating,
+        link: question.link,
+        editorial: editorial,
       },
     });
   } catch (error) {
-    console.error("❌ Error generating global QOTD:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("❌ Error generating QOTD:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// 🔧 ScraperAPI Helper
+const fetchProblemStatement = async (contestId, index) => {
+  const url = `https://codeforces.com/problemset/problem/${contestId}/${index}`;
+  const scraperUrl = `https://api.scraperapi.com?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`;
+
+  try {
+    const { data } = await axios.get(scraperUrl);
+    return data;
+  } catch (err) {
+    console.error("❌ ScraperAPI failed:", err.message);
+    return "";
+  }
+};
+
+// ✅ controllers/qotd.controllers.js
+
+export const getEditorialIfAllowed = async (req, res) => {
+  try {
+    console.log("getEditorialIfAllowed called");
+
+    const { codeforcesHandle, questionTitle } = req.body;
+
+    if (!codeforcesHandle || !questionTitle) {
+      return res
+        .status(400)
+        .json({ error: "Missing codeforcesHandle or questionTitle." });
+    }
+
+    // ✅ Find user with that handle
+    const user = await prisma.user.findUnique({
+      where: { codeforcesHandle },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // ✅ Find question by title
+    const question = await prisma.question.findFirst({
+      where: { title: questionTitle },
+    });
+
+    if (!question) {
+      return res.status(404).json({ error: "Question not found." });
+    }
+
+    // ✅ Check if user submitted the question
+    const submission = await prisma.submission.findUnique({
+      where: {
+        userId_questionId: {
+          userId: user.id,
+          questionId: question.id,
+        },
+      },
+    });
+
+    // ✅ Check if editorial is allowed
+
+    const today = new Date();
+    const isToday = question.date.toDateString() === today.toDateString();
+   
+
+    
+    const isAllowed =
+      submission?.status === "ACCEPTED" || !isToday; // after 1 day
+
+    if (!isAllowed) {
+      return res
+        .status(403)
+        .json({ error: "Editorial locked. Solve the question to view it." });
+    }
+
+    return res.status(200).json({
+      editorial: question.editorialUrl || "No editorial available.",
+    });
+  } catch (error) {
+    console.error("getEditorialIfAllowed error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 
 export const getHandle = async (req, res) => {
@@ -202,6 +314,12 @@ export const UpdatePoints = async (req, res) => {
       return res.status(200).json({ status: "REJECTED" });
     }
 
+    const today = new Date();
+    const isToday = question.date.toDateString() === today.toDateString();
+
+    if (!isToday) {
+      return res.status(200).json({ status: "EXPIRED" });
+    }
     // Check if already submitted
     const existingSubmission = await db.submission.findUnique({
       where: {

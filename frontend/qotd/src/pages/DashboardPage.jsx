@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useQotdStore } from "../store/useQotdStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
+import EditorialModal from "../components/EditorialModal";
 import {
   LogOut,
   UserCircle2,
@@ -17,14 +18,14 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
-
 export default function DashboardPage() {
-  const [handle, setHandle] = useState("");
+  const [isEditorialOpen, setIsEditorialOpen] = useState(false);
+ const [handle, setHandle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedImage, setEditedImage] = useState("");
-
   const {
     todaysQuestion,
     leaderboard,
@@ -36,9 +37,17 @@ export default function DashboardPage() {
     linkHandle,
     fetchSubmissions,
     submissions,
+    fetchEditorialIfAllowed,
   } = useQotdStore();
 
   const { authUser, logout, setAuthUser } = useAuthStore();
+  const [showEditorial, setShowEditorial] = useState(false);
+
+  useEffect(() => {
+    fetchTodaysQuestion();
+  }, []);
+
+  
 
   useEffect(() => {
     fetchTodaysQuestion();
@@ -47,6 +56,8 @@ export default function DashboardPage() {
     fetchSubmissions();
 
     if (authUser) {
+      console.log(authUser);
+      
       setEditedName(authUser.name || "");
       setEditedEmail(authUser.email || "");
       setEditedImage(authUser.profileImage || "");
@@ -59,8 +70,6 @@ export default function DashboardPage() {
         }
       });
     }
-  
-
   }, []);
 
   const handleLink = async () => {
@@ -80,8 +89,6 @@ export default function DashboardPage() {
     }
   };
 
-
-
   const handleUpdateStatus = async (title) => {
     if (!authUser?.codeforcesHandle) {
       toast.error("⚠️ Link your Codeforces handle first");
@@ -95,13 +102,20 @@ export default function DashboardPage() {
     } else if (res?.status === "REJECTED") {
       toast.error("❌ Not solved yet on Codeforces");
     }
+    else if (res?.status === "EXPIRED") {
+      toast.error("❌ This question has expired");
+    }
 
     fetchLeaderboard();
     fetchSubmissions();
   };
+const [hasAccess, setHasAccess] = useState(false);
+const handleOpenEditorial = async (title) => {
+    await fetchEditorialIfAllowed(title, authUser.codeforcesHandle);
+    setShowEditorial(true);
+  };
 
-
-
+  
   const getStatusColor = (questionTitle) => {
     if (!Array.isArray(submissions)) return "bg-gray-200";
     const sub = submissions.find((s) => s.problemTitle === questionTitle);
@@ -128,8 +142,63 @@ export default function DashboardPage() {
     }
   };
 
+  const latestQuestions = allQuestions?.slice(0, 4) || [];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white p-6 md:p-8 font-mono relative">
+      {isQuestionModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex justify-center items-center">
+          <div className="bg-gray-900 p-6 rounded-xl w-[90%] max-w-5xl overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-yellow-400">All Questions</h2>
+              <button onClick={() => setIsQuestionModalOpen(false)}>
+                <X className="text-red-500 hover:text-red-600" />
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-gray-400 border-b border-gray-600">
+                    <th className="py-2">Title</th>
+                    <th>Rating</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allQuestions.map((q, idx) => (
+                    <tr key={idx} className="border-b border-gray-700 hover:bg-gray-700/20">
+                      <td className="py-2 text-white">{q.title}</td>
+                      <td className="text-cyan-300">{q.rating}</td>
+                      <td className="text-gray-400">{new Date(q.date).toLocaleDateString()}</td>
+                      <td className="flex gap-2 py-2">
+                        <a
+                          href={q.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition"
+                        >
+                          Visit
+                        </a>
+                        <button
+                          onClick={() => handleUpdateStatus(q.title)}
+                          className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+                        >
+                          Check Submission
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+            <div className="mb-4 text-xl font-bold text-cyan-300">
+        User: {authUser?.name || "N/A"} | Score: {authUser?.points || 0}
+      </div>
       {/* Edit Profile Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
@@ -172,6 +241,8 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      
 
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -255,7 +326,7 @@ export default function DashboardPage() {
                   Solve Now
                 </a>
                 <button
-                  onClick={handleUpdateStatus}
+                  onClick={() => handleUpdateStatus(todaysQuestion.title)}
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
                 >
                   Update Status
@@ -266,7 +337,7 @@ export default function DashboardPage() {
             <p className="text-gray-400 italic">Loading question...</p>
           )}
         </div>
-
+        
         {/* Leaderboard */}
         <div className="bg-gray-800 p-6 rounded-xl shadow-2xl">
           <h2 className="text-2xl font-bold text-orange-400 mb-4">
@@ -304,8 +375,8 @@ export default function DashboardPage() {
 
       {/* All Questions */}
       <div className="mt-10 bg-gray-800 p-6 rounded-xl shadow-2xl">
-        <h2 className="text-2xl font-bold text-yellow-400 mb-4">All Questions</h2>
-        {allQuestions && allQuestions.length > 0 ? (
+        <h2 className="text-2xl font-bold text-yellow-400 mb-4">Latest Questions</h2>
+        {latestQuestions.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -317,10 +388,10 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {allQuestions.map((q, idx) => (
+                {latestQuestions.map((q, idx) => (
                   <tr key={idx} className="border-b border-gray-700 hover:bg-gray-700/20">
                     <td className="py-2 text-white">{q.title}</td>
-                    <td className="text-cyan-300">{q.rating || "N/A"}</td>
+                    <td className="text-cyan-300">{q.rating}</td>
                     <td className="text-gray-400">{new Date(q.date).toLocaleDateString()}</td>
                     <td className="flex gap-2 py-2">
                       <a
@@ -332,21 +403,37 @@ export default function DashboardPage() {
                         Visit
                       </a>
                       <button
-  onClick={() => handleUpdateStatus(q.title)}
-  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
->
-  Check Submission
-</button>
-
-
+                        onClick={() => handleUpdateStatus(q.title)}
+                        className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+                      >
+                        Check Submission
+                      </button>
                     </td>
+                    <td>
+                      <button
+                        onClick={() => handleOpenEditorial(q.title)}
+                        className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+                      >
+                       View Editorial
+                      </button>
+                      <EditorialModal isOpen={showEditorial} onClose={() => setShowEditorial(false)} />
+                    </td>
+                    
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="mt-4 text-right">
+              <button
+                onClick={() => setIsQuestionModalOpen(true)}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white"
+              >
+                Show More
+              </button>
+            </div>
           </div>
         ) : (
-          <p className="text-gray-400 italic">Loading all questions...</p>
+          <p className="text-gray-400 italic">Loading latest questions...</p>
         )}
       </div>
     </div>
