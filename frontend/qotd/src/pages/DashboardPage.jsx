@@ -3,6 +3,8 @@ import { useQotdStore } from "../store/useQotdStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
 import EditorialModal from "../components/EditorialModal";
+const { checkAuth } = useAuthStore.getState(); // or use hook
+
 import {
   LogOut,
   UserCircle2,
@@ -17,6 +19,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import LeaderboardModal from "../components/LeaderboardModal";
 
 export default function DashboardPage() {
   const [isEditorialOpen, setIsEditorialOpen] = useState(false);
@@ -37,6 +40,7 @@ export default function DashboardPage() {
     linkHandle,
     fetchSubmissions,
     submissions,
+    fetchLinkedHandle,
     fetchEditorialIfAllowed,
   } = useQotdStore();
 
@@ -71,7 +75,7 @@ export default function DashboardPage() {
       });
     }
   }, []);
-
+const [showModal, setShowModal] = useState(false);
   const handleLink = async () => {
     if (!handle) return;
     try {
@@ -106,8 +110,9 @@ export default function DashboardPage() {
       toast.error("❌ This question has expired");
     }
 
-    fetchLeaderboard();
-    fetchSubmissions();
+    await fetchLeaderboard();
+    await fetchSubmissions();
+await checkAuth();
   };
 const [hasAccess, setHasAccess] = useState(false);
 const handleOpenEditorial = async (title) => {
@@ -163,6 +168,7 @@ const handleOpenEditorial = async (title) => {
                     <th>Rating</th>
                     <th>Date</th>
                     <th>Actions</th>
+                    <th>Editorial</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -187,6 +193,16 @@ const handleOpenEditorial = async (title) => {
                           Check Submission
                         </button>
                       </td>
+                      <td>
+                      <button
+                        onClick={() => handleOpenEditorial(q.title)}
+                        className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+                      >
+                       View Editorial
+                      </button>
+                      <EditorialModal isOpen={showEditorial} onClose={() => setShowEditorial(false)} />
+                    </td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -197,7 +213,9 @@ const handleOpenEditorial = async (title) => {
       )}
 
             <div className="mb-4 text-xl font-bold text-cyan-300">
-        User: {authUser?.name || "N/A"} | Score: {authUser?.points || 0}
+              
+              
+        User: {authUser?.srn} | Score: {authUser.score || 0}
       </div>
       {/* Edit Profile Modal */}
       {isModalOpen && (
@@ -362,9 +380,13 @@ const handleOpenEditorial = async (title) => {
                 </tbody>
               </table>
               {leaderboard.length > displayCount && (
-                <Link to="/leaderboard" className="mt-4 inline-block text-sm text-blue-400 underline">
-                  View Full Leaderboard
-                </Link>
+                <button
+        onClick={() => setShowModal(true)}
+        className="mt-4 text-sm text-cyan-400 underline hover:text-white"
+      >
+        View Full Leaderboard
+      </button>
+     
               )}
             </>
           ) : (
@@ -372,7 +394,8 @@ const handleOpenEditorial = async (title) => {
           )}
         </div>
       </div>
-
+ 
+      <LeaderboardModal isOpen={showModal} onClose={() => setShowModal(false)} />
       {/* All Questions */}
       <div className="mt-10 bg-gray-800 p-6 rounded-xl shadow-2xl">
         <h2 className="text-2xl font-bold text-yellow-400 mb-4">Latest Questions</h2>

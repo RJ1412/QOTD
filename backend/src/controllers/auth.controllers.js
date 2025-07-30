@@ -72,8 +72,8 @@ export const verifyOtp = async (req, res) => {
         const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.cookie("jwt", token, {
             httpOnly: true,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV !== "development",
+      sameSite: "None",       // 🔥 required for cross-site cookies
+      secure: true,   
             maxAge: 1000 * 60 * 60 * 24 * 7
         });
 
@@ -114,8 +114,8 @@ export const login = async (req, res) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV !== "development",
+      sameSite: "None",       // 🔥 required for cross-site cookies
+      secure: true,   
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
@@ -127,6 +127,7 @@ export const login = async (req, res) => {
         srn: user.srn,
         email: user.email,
         codeforcesHandle: user.codeforcesHandle,
+        score : user.score,
       },
     });
   } catch (err) {
@@ -136,25 +137,30 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-    try {
-        res.clearCookie("jwt", {
-            httpOnly: true,
-            sameSite: "strict",
-            secure: process.env.NODE_ENV !== "development"
-        });
-        res.status(200).json({ success: true, message: "User logged out successfully" });
-    } catch (error) {
-        console.error("Logout error:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+  try {
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",       // 🔥 required for cross-site cookies
+      secure: true,           // 🔥 required for HTTPS (Render is HTTPS)
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User logged out successfully"
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
+
 
 
 export const getCurrentUser = async (req, res) => {
   try {
     const user = await db.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, srn: true, email: true, codeforcesHandle: true }
+      select: { id: true, srn: true, email: true, codeforcesHandle: true , score: true },
     });
     if (!user) return res.status(401).json({ error: "Not authenticated" });
 

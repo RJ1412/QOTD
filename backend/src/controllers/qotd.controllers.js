@@ -18,7 +18,7 @@ export const linkCodeforcesHandle = async (req, res) => {
     const existingUser = await db.user.findFirst({
       where: {
         codeforcesHandle: handle,
-        NOT: { id: userId }, 
+        NOT: { id: userId },
       },
     });
 
@@ -26,7 +26,6 @@ export const linkCodeforcesHandle = async (req, res) => {
       return res.status(409).json({ error: "This Codeforces handle is already linked to another account" });
     }
 
-    // Verify Codeforces handle from Codeforces API
     const cfRes = await fetch(`https://codeforces.com/api/user.info?handles=${handle}`);
     const data = await cfRes.json();
 
@@ -34,19 +33,19 @@ export const linkCodeforcesHandle = async (req, res) => {
       return res.status(404).json({ error: "Codeforces handle not found" });
     }
 
-
     await db.user.update({
       where: { id: userId },
       data: { codeforcesHandle: handle },
     });
 
+    const updatedUser = await db.user.findUnique({
+      where: { id: userId },
+    });
+
     return res.status(200).json({
       message: "Codeforces handle linked successfully",
-       success: true,
-  updatedUser: {
-    ...user,
-    codeforcesHandle: handle,
-  },
+      success: true,
+      updatedUser,
     });
 
   } catch (error) {
@@ -54,6 +53,7 @@ export const linkCodeforcesHandle = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
@@ -220,7 +220,7 @@ export const getEditorialIfAllowed = async (req, res) => {
 
 export const getHandle = async (req, res) => {
   try {
-    const userId = req.user?.id; // assuming `req.user` is populated by your auth middleware
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -228,14 +228,14 @@ export const getHandle = async (req, res) => {
 
     const user = await db.user.findUnique({
       where: { id: userId },
-      select: { cfHandle: true },
+      select: { codeforcesHandle: true },
     });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json({ cfHandle: user.cfHandle });
+    return res.status(200).json({ codeforcesHandle: user.codeforcesHandle });
   } catch (error) {
     console.error("Error fetching CF handle:", error);
     return res.status(500).json({ message: "Server error" });
@@ -384,7 +384,7 @@ export const getLeaderboard = async (req, res) => {
         points: user.submissions.reduce((sum, sub) => sum + sub.score, 0),
       }))
       .sort((a, b) => b.points - a.points);
-
+    
     return res.status(200).json({ leaderboard });
   } catch (error) {
     console.error("getLeaderboard error:", error);

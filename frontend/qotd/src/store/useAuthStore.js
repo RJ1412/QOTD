@@ -17,8 +17,9 @@ export const useAuthStore = create((set) => ({
       });
 
       if (!res.ok) throw new Error("Not authenticated");
-
       const data = await res.json();
+      console.log(data);
+      
       set({ authUser: data.user, loading: false });
     } catch (err) {
       set({ authUser: null, loading: false }); 
@@ -35,6 +36,8 @@ export const useAuthStore = create((set) => ({
     );
     set({ authUser: res.data.user });
     toast.success(res.data.message || "Login successful");
+    console.log("Login successful:", res.data.user);
+    
     return { success: true }; 
   } catch (err) {
     toast.error(err.response?.data?.error || "Login failed");

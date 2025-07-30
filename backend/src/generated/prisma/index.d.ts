@@ -1136,8 +1136,18 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
+  }
+
+  export type UserAvgAggregateOutputType = {
+    score: number | null
+  }
+
+  export type UserSumAggregateOutputType = {
+    score: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1150,6 +1160,7 @@ export namespace Prisma {
     resetTokenExpiry: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    score: number | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1162,6 +1173,7 @@ export namespace Prisma {
     resetTokenExpiry: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    score: number | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1174,9 +1186,18 @@ export namespace Prisma {
     resetTokenExpiry: number
     createdAt: number
     updatedAt: number
+    score: number
     _all: number
   }
 
+
+  export type UserAvgAggregateInputType = {
+    score?: true
+  }
+
+  export type UserSumAggregateInputType = {
+    score?: true
+  }
 
   export type UserMinAggregateInputType = {
     id?: true
@@ -1188,6 +1209,7 @@ export namespace Prisma {
     resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
+    score?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1200,6 +1222,7 @@ export namespace Prisma {
     resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
+    score?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1212,6 +1235,7 @@ export namespace Prisma {
     resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
+    score?: true
     _all?: true
   }
 
@@ -1253,6 +1277,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: UserAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1283,6 +1319,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
+    _avg?: UserAvgAggregateInputType
+    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
@@ -1297,7 +1335,10 @@ export namespace Prisma {
     resetTokenExpiry: Date | null
     createdAt: Date
     updatedAt: Date
+    score: number
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1326,6 +1367,7 @@ export namespace Prisma {
     resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    score?: boolean
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1340,6 +1382,7 @@ export namespace Prisma {
     resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    score?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1352,6 +1395,7 @@ export namespace Prisma {
     resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    score?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1364,9 +1408,10 @@ export namespace Prisma {
     resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    score?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "srn" | "email" | "password" | "codeforcesHandle" | "resetToken" | "resetTokenExpiry" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "srn" | "email" | "password" | "codeforcesHandle" | "resetToken" | "resetTokenExpiry" | "createdAt" | "updatedAt" | "score", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submissions?: boolean | User$submissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1389,6 +1434,7 @@ export namespace Prisma {
       resetTokenExpiry: Date | null
       createdAt: Date
       updatedAt: Date
+      score: number
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1822,6 +1868,7 @@ export namespace Prisma {
     readonly resetTokenExpiry: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly score: FieldRef<"User", 'Int'>
   }
     
 
@@ -4535,7 +4582,8 @@ export namespace Prisma {
     resetToken: 'resetToken',
     resetTokenExpiry: 'resetTokenExpiry',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    score: 'score'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4682,6 +4730,7 @@ export namespace Prisma {
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    score?: IntFilter<"User"> | number
     submissions?: SubmissionListRelationFilter
   }
 
@@ -4695,6 +4744,7 @@ export namespace Prisma {
     resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    score?: SortOrder
     submissions?: SubmissionOrderByRelationAggregateInput
   }
 
@@ -4711,6 +4761,7 @@ export namespace Prisma {
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    score?: IntFilter<"User"> | number
     submissions?: SubmissionListRelationFilter
   }, "id" | "srn" | "email" | "codeforcesHandle">
 
@@ -4724,9 +4775,12 @@ export namespace Prisma {
     resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    score?: SortOrder
     _count?: UserCountOrderByAggregateInput
+    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
+    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -4742,6 +4796,7 @@ export namespace Prisma {
     resetTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    score?: IntWithAggregatesFilter<"User"> | number
   }
 
   export type QuestionWhereInput = {
@@ -4892,6 +4947,7 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    score?: number
     submissions?: SubmissionCreateNestedManyWithoutUserInput
   }
 
@@ -4905,6 +4961,7 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    score?: number
     submissions?: SubmissionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -4918,6 +4975,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
     submissions?: SubmissionUpdateManyWithoutUserNestedInput
   }
 
@@ -4931,6 +4989,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
     submissions?: SubmissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -4944,6 +5003,7 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    score?: number
   }
 
   export type UserUpdateManyMutationInput = {
@@ -4956,6 +5016,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -4968,6 +5029,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
   }
 
   export type QuestionCreateInput = {
@@ -5164,6 +5226,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type SubmissionListRelationFilter = {
     every?: SubmissionWhereInput
     some?: SubmissionWhereInput
@@ -5189,6 +5262,11 @@ export namespace Prisma {
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    score?: SortOrder
+  }
+
+  export type UserAvgOrderByAggregateInput = {
+    score?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -5201,6 +5279,7 @@ export namespace Prisma {
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    score?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -5213,6 +5292,11 @@ export namespace Prisma {
     resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    score?: SortOrder
+  }
+
+  export type UserSumOrderByAggregateInput = {
+    score?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5279,7 +5363,7 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -5287,7 +5371,12 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type QuestionCountOrderByAggregateInput = {
@@ -5331,22 +5420,6 @@ export namespace Prisma {
   export type QuestionSumOrderByAggregateInput = {
     codeforcesId?: SortOrder
     rating?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EnumSubmissionStatusFilter<$PrismaModel = never> = {
@@ -5446,6 +5519,14 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type SubmissionUpdateManyWithoutUserNestedInput = {
     create?: XOR<SubmissionCreateWithoutUserInput, SubmissionUncheckedCreateWithoutUserInput> | SubmissionCreateWithoutUserInput[] | SubmissionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SubmissionCreateOrConnectWithoutUserInput | SubmissionCreateOrConnectWithoutUserInput[]
@@ -5486,14 +5567,6 @@ export namespace Prisma {
     connectOrCreate?: SubmissionCreateOrConnectWithoutQuestionInput | SubmissionCreateOrConnectWithoutQuestionInput[]
     createMany?: SubmissionCreateManyQuestionInputEnvelope
     connect?: SubmissionWhereUniqueInput | SubmissionWhereUniqueInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type SubmissionUpdateManyWithoutQuestionNestedInput = {
@@ -5606,6 +5679,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -5621,17 +5705,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5840,6 +5913,7 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    score?: number
   }
 
   export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -5852,6 +5926,7 @@ export namespace Prisma {
     resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    score?: number
   }
 
   export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -5907,6 +5982,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
   }
 
   export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -5919,6 +5995,7 @@ export namespace Prisma {
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    score?: IntFieldUpdateOperationsInput | number
   }
 
   export type QuestionUpsertWithoutSubmissionsInput = {

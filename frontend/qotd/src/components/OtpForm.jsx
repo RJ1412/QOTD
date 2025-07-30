@@ -1,38 +1,116 @@
-// src/components/OtpForm.jsx
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function OtpForm({ email, onVerified }) {
   const [otp, setOtp] = useState("");
   const { verifyOtp } = useAuthStore();
+  const inputsRef = useRef([]);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [typedText, setTypedText] = useState("");
+  const fullText = `We’ve sent a 6-digit OTP to ${email}`;
+
+  // Typing effect
+  useEffect(() => {
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i < fullText.length) {
+        setTypedText((prev) => prev + fullText[i]);
+        i++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 30);
+    return () => clearInterval(typeInterval);
+  }, [email]);
+
+  // Countdown for resend
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const timer = setInterval(() => {
+      setResendTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendTimer]);
+
+  const handleChange = (e, idx) => {
+    const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 1);
+    const newOtp = otp.split("");
+    newOtp[idx] = val;
+    const updatedOtp = newOtp.join("");
+    setOtp(updatedOtp);
+    if (val && inputsRef.current[idx + 1]) {
+      inputsRef.current[idx + 1].focus();
+    }
+  };
 
   const handleVerify = async () => {
-    if (!otp) return;
-    await verifyOtp(email, otp);
-    onVerified();
+    if (otp.length === 6) {
+      await verifyOtp(email, otp);
+      onVerified();
+    }
+  };
+
+  useEffect(() => {
+    if (otp.length === 6) handleVerify();
+  }, [otp]);
+
+  const handleResend = () => {
+    if (resendTimer > 0) return;
+    alert("📨 OTP resent! (hook this to actual backend API)");
+    setResendTimer(30);
   };
 
   return (
-    <div className="space-y-5">
-      <h2 className="text-xl font-semibold text-[#0077b6] dark:text-white text-center">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 40 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="space-y-6 p-6 rounded-xl shadow-lg bg-[#0f172a] border border-cyan-400 max-w-md w-full"
+    >
+      <h2 className="text-2xl font-bold text-cyan-400 text-center drop-shadow-md">
         Verify Your Email
       </h2>
-      <p className="text-sm text-center text-gray-600 dark:text-gray-300">
-        We’ve sent an OTP to <span className="font-medium">{email}</span>
+      <p className="text-sm text-center text-gray-300 h-5 min-h-[20px] whitespace-nowrap">
+        {typedText}
+        <span className="animate-pulse">|</span>
       </p>
-      <input
-        type="text"
-        placeholder="Enter OTP"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        className="p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#2a2a2a] text-gray-800 dark:text-white placeholder-gray-500 w-full"
-      />
+
+      <div className="flex justify-center gap-2">
+        {[...Array(6)].map((_, idx) => (
+          <input
+            key={idx}
+            type="text"
+            maxLength={1}
+            value={otp[idx] || ""}
+            onChange={(e) => handleChange(e, idx)}
+            ref={(el) => (inputsRef.current[idx] = el)}
+            className="w-12 h-14 text-center text-xl font-bold rounded-lg border border-cyan-500 bg-[#1e293b] text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-150 shadow-md"
+          />
+        ))}
+      </div>
+
       <button
         onClick={handleVerify}
-        className="w-full mt-2 bg-[#90e0ef] dark:bg-[#0077b6] text-[#1a1a1a] dark:text-white font-semibold py-3 rounded-lg hover:opacity-90 transition"
+        className="w-full mt-4 py-3 rounded-lg bg-cyan-400 text-black font-semibold hover:opacity-90 transition duration-200 shadow-md"
       >
         Verify OTP
       </button>
-    </div>
+
+      <p className="text-center text-sm text-gray-400 mt-2">
+        Didn’t receive the code?{" "}
+        <button
+          onClick={handleResend}
+          disabled={resendTimer > 0}
+          className={`${
+            resendTimer > 0
+              ? "text-gray-500 cursor-not-allowed"
+              : "text-pink-400 hover:underline"
+          } font-medium`}
+        >
+          {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend OTP"}
+        </button>
+      </p>
+    </motion.div>
   );
 }

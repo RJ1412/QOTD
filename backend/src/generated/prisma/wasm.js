@@ -129,7 +129,8 @@ exports.Prisma.UserScalarFieldEnum = {
   resetToken: 'resetToken',
   resetTokenExpiry: 'resetTokenExpiry',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  score: 'score'
 };
 
 exports.Prisma.QuestionScalarFieldEnum = {

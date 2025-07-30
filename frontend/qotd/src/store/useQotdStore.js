@@ -151,13 +151,14 @@ verifyAndAward: async (questionTitle, codeforcesHandle) => {
 
   // ✅ Fetch linked Codeforces handle
   fetchLinkedHandle: async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/v1/qotd/cf-handle`, {
-        withCredentials: true,
-      });
-      set({ linkedHandle: res.data.cfHandle });
-    } catch (err) {
-      set({ error: "Failed to fetch linked handle" });
-    }
-  },
+  try {
+    const res = await axios.get(`${BASE_URL}/api/v1/qotd/cf-handle`, {
+      withCredentials: true,
+    });
+    set({ linkedHandle: res.data.codeforcesHandle }); // ✅ Fixed here
+  } catch (err) {
+    set({ error: "Failed to fetch linked handle" });
+  }
+},
+
 }));
